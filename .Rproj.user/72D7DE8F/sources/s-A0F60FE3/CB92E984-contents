@@ -1,0 +1,107 @@
+---
+title: "Midterm"
+output:
+  pdf_document: 
+   latex_engine: xelatex
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+In the second midterm, you will be working with data collected by FiveThirtyEight some time before the election in the US in 2016. It contains survey data on electoral preferences of American citizens in different US states, according to independent pollsters. 
+
+```{r Accessing the dataset}
+#install.packages("dslabs")
+library("dslabs")
+my_data <- polls_us_election_2016
+#Data info: https://www.rdocumentation.org/packages/dslabs/versions/0.7.4/topics/polls_us_election_2016
+#View(my_data)
+```
+
+1) Save the raw poll data on the level of support of Mr. Johnson in the states of Oregon and New Mexico as a separate object called "oregon_mexico".
+
+```{r Question 1}
+oregon_mexico <- my_data %>%
+select (state, rawpoll_johnson) %>%
+filter (state == "Oregon" | state == "New Mexico") 
+```
+
+2) Create a new object called called "results" where you will save raw poll data on the level of Trump's support but only those values that are higher than 45 and smaller than 50. 
+
+```{r Question 2}
+results <- my_data %>%
+select(rawpoll_trump) %>%
+filter(rawpoll_trump > 45, rawpoll_trump < 50)
+```
+
+3) Make a sequence going from the mean of samplesize to the maximum value of raw poll data on Clinton's support with a decrement of -100. Save it as a object called some data. 
+
+NB: When calculating the mean of sample size you will get an NA unless you add an argument "na.rm = T". It will tell R to ignore missing values.
+
+```{r Question 3}
+mean_data <- mean(my_data$samplesize, na.rm = T)
+max_data_clinton <- max(my_data$rawpoll_clinton)
+some_data <- seq(mean_data, max_data_clinton, by = -100)
+```
+
+4) Make a list called "new_list" where you will save objects from the previous three tasks. Each element of this list should have an original name. Extract the last 15 values from one of the elements of the list, multiply them by a median of another element, and save the result as an object called "new".
+
+Remember to add na.rm = T to the median function if your data has NAs. 
+
+```{r Question 4}
+new_list <- list(oregon_mexico, results, some_data)
+names(new_list) <- c("Task_1", "Task_2", "Task_3")
+a <- tail(new_list$Task_2, 15)
+b <- median(new_list$Task_3)
+new <- a * b
+```
+
+5) Choose all cases, which grade is equal to A-, A or A+, and make a new object called "A_grades". Compare the maximum value of raw poll data on Trump's with Clinton's. To do this, please make a condition, according to which the output would be "TRUE".
+
+```{r Question 5}
+A_grades <- my_data %>%
++ filter (grade == "A-" | grade == "A" | grade == "A+")
+if(A_grades$rawpoll_trump < A_grades$rawpoll_clinton) {
+  print("TRUE")
+} else {
+  print("FALSE")
+}
+```
+
+6) Create a new dataframe and save it as an object. The dataframe should have five variables and 100 observations. Each variable should be created using a different function and/or different arguments of some function. For example, "each" or "times" arguments within rep function will count as different arguments. You can fill this data frame with any random data that you like: random numbers, names of your favorite songs repeated over and over again, etc.
+
+NB: If you copy a data frame that you had to create for the homework or the dataframe that we worked with during classes, you will receive 0 points for this task. 
+
+```{r Question 6}
+df <- data.frame(Person_number = seq(1, 100),
+                 State_number = rep(11, 100),
+                 train_ticket = sample(x = 1:100, size = 100),
+                 each_second_person = seq(2, 100, by = 2),
+                 lottery_ticket = sort(sample.int(3000, 100)))
+                 
+              
+```
+
+7) Here is a new data set about walking a dog on the specific day in a week. Below is the description of the variables that exist in the data 
+
+Your task is to plot the graph, which helps you to see the difference between the walked miles and the weather. Add the fact that a dog was walked or not to each weather group. Fill the graph with any colour you prefer. What's the difference between those, who did walk their dogs and those who didn't by each weather type? Write the description of what did you see (no less than 100 words)
+
+```{r}
+#install.packages('Stat2Data')	
+library(Stat2Data)
+data(WalkTheDogs)
+#Data info: https://www.rdocumentation.org/packages/Stat2Data/versions/2.0.0/topics/WalkTheDogs
+#View(WalkTheDogs)
+
+ggplot(WalkTheDogs, aes(x = Kcal, y = Miles, color = Walk)) + 
++ geom_point(stat="identity") +
+  facet_wrap(~ Weather)
+
+#When it is cold, people go for a shorter walk with their dogs, but without dogs they have longer walks than with the dog. People tend to stay at home than it is raining. And people go dor a walk, both with and without dogs, when it is shining. It seems that people with dogs burn slightly more calories than people withput dogs, although the amount of miles remains the same. There is also a case of one person with dog who walkes over 10 miles during the shiny weather. However, usually people do not walk more than 5 miles, despite the weather.
+```
+
+
+8) Please, save the output of this RMarkdown file as a pdf. You need to send two files for this task: rmd and pdf to my e-mail azheltouhova@hse.ru. The deadline is 10th of April 23.59. 
+
+
